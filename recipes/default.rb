@@ -55,22 +55,32 @@ template node[:pgbouncer][:initfile] do
   notifies :reload, resources(:service => "pgbouncer")
 end
 
-template node[:pgbouncer][:additional_config_file] do
-  source "pgbouncer.sysconfig.erb"
-  owner pgb_user
-  group pgb_user
-  mode "664"
-  notifies :reload, resources(:service => "pgbouncer")
-end
+case node[:platform_family]
+when "rhel"
+  template node[:pgbouncer][:additional_config_file] do
+    source "pgbouncer.sysconfig.erb"
+    owner pgb_user
+    group pgb_user
+    mode "664"
+    notifies :reload, resources(:service => "pgbouncer")
+  end
 
-template "/etc/init.d/pgbouncer" do
-  source "pgbouncer_init.erb"
-  owner "root"
-  group "root"
-  mode "775"
-  notifies :restart, resources(:service => "pgbouncer")
+  template "/etc/init.d/pgbouncer" do
+    source "pgbouncer_init.erb"
+    owner "root"
+    group "root"
+    mode "775"
+    notifies :restart, resources(:service => "pgbouncer")
+  end
+when "debian"
+  template node[:pgbouncer][:additional_config_file] do
+    source "pgbouncer.default.erb"
+    owner pgb_user
+    group pgb_user
+    mode "664"
+    notifies :reload, resources(:service => "pgbouncer")
+  end
 end
-
 
 service "pgbouncer" do
   action [:enable]

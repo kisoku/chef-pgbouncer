@@ -6,7 +6,8 @@ default[:pgbouncer][:ignore_startup_parameters] = nil
 
 
 # Distro-Dependent settings
-if platform?("redhat", "centos", "scientific", "fedora")
+case platform_family
+when "rhel"
   # this value is hardcoded into rpm from yum.postgresql.org
   # yet still required as commandline parameter WTF
   default[:pgbouncer][:initfile] = "/etc/pgbouncer.ini"
