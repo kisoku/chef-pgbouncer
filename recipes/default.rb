@@ -78,6 +78,14 @@ when "debian"
   end
 end
 
+template "/etc/pgbouncer/userlist.txt" do
+  source "userlist.txt.erb"
+  owner pgb_user
+  group pgb_user
+  mode  "0600"
+  notifies :restart, "service[pgbouncer]"
+end
+
 service "pgbouncer" do
   supports :status => true, :start => true, :stop => true, :restart => true, :reload => true
   action [ :start, :enable ]
