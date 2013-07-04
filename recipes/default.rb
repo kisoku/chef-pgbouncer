@@ -35,10 +35,6 @@ package "pgbouncer" do
   action :upgrade
 end
 
-service "pgbouncer" do
-  action :nothing
-  supports :status => true, :start => true, :stop => true, :restart => true, :reload => true
-end
 
 # EL rpms don't create this directory automatically
 directory "/etc/pgbouncer" do
@@ -62,7 +58,7 @@ when "rhel"
     owner pgb_user
     group pgb_user
     mode "664"
-    notifies :reload, resources(:service => "pgbouncer")
+    notifies :restart, resources(:service => "pgbouncer")
   end
 
   template "/etc/init.d/pgbouncer" do
@@ -70,7 +66,7 @@ when "rhel"
     owner "root"
     group "root"
     mode "775"
-    notifies :restart, resources(:service => "pgbouncer")
+    notifies :restart, "service[pgbouncer]"
   end
 when "debian"
   template node[:pgbouncer][:additional_config_file] do
@@ -78,12 +74,13 @@ when "debian"
     owner pgb_user
     group pgb_user
     mode "664"
-    notifies :reload, resources(:service => "pgbouncer")
+    notifies :restart, "service[pgbouncer]"
   end
 end
 
 service "pgbouncer" do
-  action [:enable]
+  supports :status => true, :start => true, :stop => true, :restart => true, :reload => true
+  action [ :start, :enable ]
 end
 
 logrotate_app "pgbouncer" do
