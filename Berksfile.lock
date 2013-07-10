@@ -1,0 +1,47 @@
+{
+  "sha": "a6a26f3a9ddcac1f757290da05b0a46658b63c24",
+  "sources": {
+    "pgbouncer": {
+      "path": "."
+    },
+    "pgbouncer_test": {
+      "path": "./test/cookbooks/pgbouncer_test"
+    },
+    "runit": {
+      "locked_version": "1.1.6"
+    },
+    "build-essential": {
+      "locked_version": "1.4.0"
+    },
+    "yum": {
+      "locked_version": "2.3.0"
+    },
+    "sudo": {
+      "locked_version": "2.1.2"
+    },
+    "logrotate": {
+      "locked_version": "1.2.2"
+    },
+    "database": {
+      "locked_version": "1.4.0"
+    },
+    "mysql": {
+      "locked_version": "3.0.2"
+    },
+    "openssl": {
+      "locked_version": "1.0.2"
+    },
+    "postgresql": {
+      "locked_version": "3.0.2"
+    },
+    "apt": {
+      "locked_version": "2.0.0"
+    },
+    "aws": {
+      "locked_version": "0.101.2"
+    },
+    "xfs": {
+      "locked_version": "1.1.0"
+    }
+  }
+}
