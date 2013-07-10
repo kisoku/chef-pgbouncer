@@ -10,6 +10,9 @@ recipe "pgbouncer", "Installs and configures pgbouncer"
   supports os
 end
 
+depends   "sudo"
+depends   "logrotate"
+
 attribute "pgbouncer/databases",
   :display_name => "PgBouncer databases",
   :description => "Dictionary consisting of database names with connection info.",
