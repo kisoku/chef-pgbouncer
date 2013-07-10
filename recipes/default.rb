@@ -48,7 +48,7 @@ template node[:pgbouncer][:initfile] do
   owner "root"
   group pgb_user
   mode "664"
-  notifies :reload, resources(:service => "pgbouncer")
+  notifies :restart, "service[pgbouncer]"
 end
 
 case node[:platform_family]
@@ -58,7 +58,7 @@ when "rhel"
     owner pgb_user
     group pgb_user
     mode "664"
-    notifies :restart, resources(:service => "pgbouncer")
+    notifies :restart, "service[pgbouncer]"
   end
 
   template "/etc/init.d/pgbouncer" do
