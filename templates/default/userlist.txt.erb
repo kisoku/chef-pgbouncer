@@ -1,3 +1,3 @@
-<% @node[:pgbouncer][:userlist].each do |user, pass| %>
-"<%= user %>" "<%= pass %>"
+<% @node[:pgbouncer][:userlist].keys.sort.each do |user| %>
+"<%= user %>" "<%= @node[:pgbouncer][:userlist][user] %>"
 <% end %>

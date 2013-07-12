@@ -4,8 +4,8 @@
 
 ;; database name = connect string
 [databases]
-<% node[:pgbouncer][:databases].each do |dbname, dbinfo| %>
-<%= dbname %> = <%= dbinfo %>
+<% node[:pgbouncer][:databases].keys.sort.each do |dbname| %>
+<%= dbname %> = <%= node[:pgbouncer][:databases][dbname] %>
 <% end %>
 
 ;; Configuation section
