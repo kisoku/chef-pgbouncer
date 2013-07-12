@@ -58,17 +58,25 @@ end
 
 include_recipe "runit"
 
+execute "stop init script" do
+  command "/etc/init.d/pgbouncer stop"
+  only_if { ::File.exist? "/etc/init.d/pgbouncer" }
+  only_if "/etc/init.d/pgbouncer status | grep 'pgbouncer is running'"
+  not_if { ::File.symlink? "/etc/init.d/pgbouncer" }
+  notifies :run, "execute[remove pgbouncer init script]", :immediately
+end
+
 execute "remove pgbouncer init script" do
   command "rm /etc/init.d/pgbouncer"
-  only_if { ::File.exist? "/etc/init.d/pgbouncer" }
-  not_if { ::File.symlink? "/etc/init.d/pgbouncer" }
   notifies :run, "execute[remove pgbouncer rc.d links]", :immediately
+  action :nothing
 end
 
 execute "remove pgbouncer rc.d links" do
-  command "update-rc.d pgbouncer remove"
+  command "update-rc.d -f pgbouncer remove"
   action :nothing
 end
+
 
 runit_service "pgbouncer" do
   action [ :enable, :start ]
