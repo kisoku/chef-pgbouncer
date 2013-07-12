@@ -1,0 +1,7 @@
+#!/bin/sh
+
+exec 2>&1
+exec chpst -u <%= node['pgbouncer']['user'] %>:<%= node['pgbouncer']['user'] %> \
+        /usr/sbin/pgbouncer /etc/pgbouncer/pgbouncer.ini
+
+

@@ -19,22 +19,11 @@
 # limitations under the License.
 #
 
-include_recipe "logrotate"
-
 pgb_user = node['pgbouncer']['user']
 
-
-case node['platform']
-when "redhat","centos","scientific","fedora","suse"
-  package "cronie"
-  version = node['postgresql']['version'].split('.').join('')
-  include_recipe "yumrepo::postgresql"
-end
-
 package "pgbouncer" do
-  action :upgrade
+  action :install
 end
-
 
 # EL rpms don't create this directory automatically
 directory "/etc/pgbouncer" do
@@ -51,31 +40,12 @@ template node[:pgbouncer][:initfile] do
   notifies :restart, "service[pgbouncer]"
 end
 
-case node[:platform_family]
-when "rhel"
-  template node[:pgbouncer][:additional_config_file] do
-    source "pgbouncer.sysconfig.erb"
-    owner pgb_user
-    group pgb_user
-    mode "664"
-    notifies :restart, "service[pgbouncer]"
-  end
-
-  template "/etc/init.d/pgbouncer" do
-    source "pgbouncer_init.erb"
-    owner "root"
-    group "root"
-    mode "775"
-    notifies :restart, "service[pgbouncer]"
-  end
-when "debian"
-  template node[:pgbouncer][:additional_config_file] do
-    source "pgbouncer.default.erb"
-    owner pgb_user
-    group pgb_user
-    mode "664"
-    notifies :restart, "service[pgbouncer]"
-  end
+template node[:pgbouncer][:additional_config_file] do
+  source "pgbouncer.default.erb"
+  owner pgb_user
+  group pgb_user
+  mode "664"
+  notifies :restart, "service[pgbouncer]"
 end
 
 template "/etc/pgbouncer/userlist.txt" do
@@ -86,26 +56,22 @@ template "/etc/pgbouncer/userlist.txt" do
   notifies :restart, "service[pgbouncer]"
 end
 
-service "pgbouncer" do
-  supports :status => true, :start => true, :stop => true, :restart => true, :reload => true
-  action [ :start, :enable ]
+include_recipe "runit"
+
+execute "remove pgbouncer init script" do
+  command "rm /etc/init.d/pgbouncer"
+  only_if { ::File.exist? "/etc/init.d/pgbouncer" }
+  not_if { ::File.symlink? "/etc/init.d/pgbouncer" }
+  notifies :run, "execute[remove pgbouncer rc.d links]", :immediately
 end
 
-logrotate_app "pgbouncer" do
-  cookbook "logrotate"
-  path "/var/log/pgbouncer.log"
-  frequency "daily"
-  create "644 root root"
-  rotate 30
-end 
+execute "remove pgbouncer rc.d links" do
+  command "update-rc.d pgbouncer remove"
+  action :nothing
+end
 
-# add sudoers
-sudo pgb_user do
-  template "sudo.erb"
-  variables(
-            {
-              "name" => pgb_user,
-              "service" => "pgbouncer"
-            }
-            )
+runit_service "pgbouncer" do
+  action [ :enable, :start ]
+  log true
+  default_logger true
 end

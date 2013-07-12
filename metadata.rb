@@ -10,6 +10,7 @@ recipe "pgbouncer", "Installs and configures pgbouncer"
   supports os
 end
 
+depends   "runit"
 depends   "sudo"
 depends   "logrotate"
 
