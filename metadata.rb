@@ -1,5 +1,5 @@
-maintainer       "Christoph Krybus"
-maintainer_email "ckrybus@googlemail.com"
+maintainer       "Mathieu Sauve-Frankel"
+maintainer_email "msf@kisoku.net"
 license          "Apache 2.0"
 description      "Installs and configures pgbouncer"
 version          "0.2.5"
