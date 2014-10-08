@@ -25,6 +25,7 @@ end
 
 
 # Where to wait for clients 
+default[:pgbouncer][:listen_addr] = "#{node.ipaddress}"
 default[:pgbouncer][:listen_port] = "6432"
 
 # Authentication settings
